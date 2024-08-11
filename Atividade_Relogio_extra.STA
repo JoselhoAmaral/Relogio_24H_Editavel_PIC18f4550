@@ -1,0 +1,45 @@
+
+ROM used:   394/32768 (1%)
+            394/32768 (1%) including unused fragments
+
+            0.4 Average locations per line
+            8.0 Average locations per statement
+
+RAM used:   21/2048 (1%) at main() level
+            22/2048 (1%) worst case
+
+Stack used: 1 worst case (1 in main + 0 for interrupts)
+Stack size: 31
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  103    49 100  Atividade_Relogio_extra.c
+  837     0   0  ..\..\..\..\..\..\..\..\Program Files (x86)\PICC\Devices\18F4550.h
+----- -----
+  940    49 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     38   5    1             @delay_ms1
+0    352  45    1  1316  5.9  main
+ Inline         0             @cinit1
+
+Program metrics:
+    Functions               1
+    Statements              49
+    Comments                178
+    Volume (V)              1322
+    Difficulty (D)          5.7
+    Effort to implement (E) 7572
+    Time to implement (T)   7 minutes
+    Est Delivered Bugs (B)  0
+    Cyclomatic Complexity   7
+    Maintainability (MI)    117
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00002     4  0  
+00004-07FFE   390  32374  
+
+
+

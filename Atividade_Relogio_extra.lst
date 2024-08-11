@@ -1,0 +1,325 @@
+CCS PCH C Compiler, Version 5.015, 5967               30-jun-21 15:57
+
+               Filename:   C:\Users\Joselho Amaral\Documents\Joselho\IFCE\S8 - Eng. Automação e Controle\Microcontroladores\Atividade Extra\Atividade_Relogio_extra.lst
+
+               ROM used:   394 bytes (1%)
+                           Largest free fragment is 32374
+               RAM used:   21 (1%) at main() level
+                           22 (1%) worst case
+               Stack used: 1 locations
+               Stack size: 31
+
+*
+0000:  GOTO   002A
+.................... #include<18F4550.h>            
+.................... //////////// Standard Header file for the PIC18F4550 device //////////////// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... ////        (C) Copyright 1996, 2013 Custom Computer Services          //// 
+.................... //// This source code may only be used by licensed users of the CCS C  //// 
+.................... //// compiler.  This source code may only be distributed to other      //// 
+.................... //// licensed users of the CCS C compiler.  No other use, reproduction //// 
+.................... //// or distribution is permitted without written permission.          //// 
+.................... //// Derivative programs created using this software in object code    //// 
+.................... //// form are not restricted in any way.                               //// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #device PIC18F4550 
+....................  
+.................... #list 
+....................  
+.................... #fuses HS, NOWDT, CPUDIV1 
+.................... #use delay (clock=20MHz) 
+0004:  CLRF   FEA
+0006:  MOVLW  15
+0008:  MOVWF  FE9
+000A:  MOVF   FEF,W
+000C:  BZ    0028
+000E:  MOVLW  06
+0010:  MOVWF  01
+0012:  CLRF   00
+0014:  DECFSZ 00,F
+0016:  BRA    0014
+0018:  DECFSZ 01,F
+001A:  BRA    0012
+001C:  MOVLW  7B
+001E:  MOVWF  00
+0020:  DECFSZ 00,F
+0022:  BRA    0020
+0024:  DECFSZ FEF,F
+0026:  BRA    000E
+0028:  RETURN 0
+....................  
+.................... int horasDezena = 0; 
+.................... int horasUnidade = 0; 
+.................... int minutosDezena = 0; 
+.................... int minutosUnidade = 0; 
+.................... long int conteSegundos = 0; 
+....................  
+.................... /*Matriz de 10 posições contendo o valor a ser enviado para a porta D a fim de 
+....................    mostrar o dígito referente nos displays */ 
+.................... int digito[10] = 
+....................                {0b00111111,    //Dígito 0 
+....................                 0b00000110,    //Dígito 1 
+....................                 0b01011011,    //Dígito 2 
+....................                 0b01001111,    //Dígito 3 
+....................                 0b01100110,    //Dígito 4 
+....................                 0b01101101,    //Dígito 5 
+....................                 0b01111101,    //Dígito 6 
+....................                 0b00000111,    //Dígito 7 
+....................                 0b01111111,    //Dígito 8 
+....................                 0b01101111     //Dígito 9 
+....................                }; 
+....................                 
+.................... void main(){ 
+002A:  CLRF   FF8
+002C:  BCF    FD0.7
+002E:  CLRF   04
+0030:  CLRF   05
+0032:  CLRF   06
+0034:  CLRF   07
+0036:  CLRF   09
+0038:  CLRF   08
+003A:  MOVF   FC1,W
+003C:  ANDLW  C0
+003E:  IORLW  0F
+0040:  MOVWF  FC1
+0042:  MOVLW  07
+0044:  MOVWF  FB4
+0046:  MOVLW  3F
+0048:  MOVWF  0A
+004A:  MOVLW  06
+004C:  MOVWF  0B
+004E:  MOVLW  5B
+0050:  MOVWF  0C
+0052:  MOVLW  4F
+0054:  MOVWF  0D
+0056:  MOVLW  66
+0058:  MOVWF  0E
+005A:  MOVLW  6D
+005C:  MOVWF  0F
+005E:  MOVLW  7D
+0060:  MOVWF  10
+0062:  MOVLW  07
+0064:  MOVWF  11
+0066:  MOVLW  7F
+0068:  MOVWF  12
+006A:  MOVLW  6F
+006C:  MOVWF  13
+....................  
+.................... port_b_pullups(true);   // Liga os pull ups 
+006E:  BCF    FF1.7
+.................... output_d(0);            // Desliga todas as portas D 
+0070:  CLRF   F95
+0072:  CLRF   F8C
+.................... SET_TRIS_B(0xFF); 
+0074:  MOVLW  FF
+0076:  MOVWF  F93
+.................... SET_TRIS_D(0x00); 
+0078:  MOVLW  00
+007A:  MOVWF  F95
+....................  
+.................... while(true){ 
+....................  
+.................... //--- Ciclo de repetição do dos 4 display's LED's. duração 20ms -------------// 
+.................... //Display horas dezena 
+.................... OUTPUT_D(digito[horasDezena]); 
+007C:  CLRF   03
+007E:  MOVF   04,W
+0080:  ADDLW  0A
+0082:  MOVWF  FE9
+0084:  MOVLW  00
+0086:  ADDWFC 03,W
+0088:  MOVWF  FEA
+008A:  MOVFF  FEF,14
+008E:  CLRF   F95
+0090:  MOVFF  14,F8C
+.................... OUTPUT_A(0b00000100); 
+0094:  CLRF   F92
+0096:  MOVLW  04
+0098:  MOVWF  F89
+.................... delay_ms(5);  
+009A:  MOVLW  05
+009C:  MOVWF  15
+009E:  RCALL  0004
+....................  
+.................... //Display horas unidade 
+.................... OUTPUT_D(digito[horasUnidade]); 
+00A0:  CLRF   03
+00A2:  MOVF   05,W
+00A4:  ADDLW  0A
+00A6:  MOVWF  FE9
+00A8:  MOVLW  00
+00AA:  ADDWFC 03,W
+00AC:  MOVWF  FEA
+00AE:  MOVFF  FEF,14
+00B2:  CLRF   F95
+00B4:  MOVFF  14,F8C
+.................... OUTPUT_A(0b00001000); 
+00B8:  CLRF   F92
+00BA:  MOVLW  08
+00BC:  MOVWF  F89
+.................... delay_ms(5); 
+00BE:  MOVLW  05
+00C0:  MOVWF  15
+00C2:  RCALL  0004
+....................  
+.................... //Display minutos dezena 
+.................... OUTPUT_D(digito[minutosDezena]); 
+00C4:  CLRF   03
+00C6:  MOVF   06,W
+00C8:  ADDLW  0A
+00CA:  MOVWF  FE9
+00CC:  MOVLW  00
+00CE:  ADDWFC 03,W
+00D0:  MOVWF  FEA
+00D2:  MOVFF  FEF,14
+00D6:  CLRF   F95
+00D8:  MOVFF  14,F8C
+.................... OUTPUT_A(0b00010000); 
+00DC:  CLRF   F92
+00DE:  MOVLW  10
+00E0:  MOVWF  F89
+.................... delay_ms(5); 
+00E2:  MOVLW  05
+00E4:  MOVWF  15
+00E6:  RCALL  0004
+....................  
+.................... //Display minutos unidade 
+.................... OUTPUT_D(digito[minutosUnidade]); 
+00E8:  CLRF   03
+00EA:  MOVF   07,W
+00EC:  ADDLW  0A
+00EE:  MOVWF  FE9
+00F0:  MOVLW  00
+00F2:  ADDWFC 03,W
+00F4:  MOVWF  FEA
+00F6:  MOVFF  FEF,14
+00FA:  CLRF   F95
+00FC:  MOVFF  14,F8C
+.................... OUTPUT_A(0b00100000); 
+0100:  CLRF   F92
+0102:  MOVLW  20
+0104:  MOVWF  F89
+.................... delay_ms(5); 
+0106:  MOVLW  05
+0108:  MOVWF  15
+010A:  RCALL  0004
+.................... //---------------------------------------------------------------------------//  
+....................  
+.................... // Dado que 60s = 60.000ms = 3.000x20ms = 1min. 
+.................... if(conteSegundos == 3000){ 
+010C:  MOVF   08,W
+010E:  SUBLW  B8
+0110:  BNZ   011A
+0112:  MOVF   09,W
+0114:  SUBLW  0B
+0116:  BNZ   011A
+....................    minutosUnidade++; 
+0118:  INCF   07,F
+.................... } 
+....................  
+.................... // if que adiciona + 1 minuto caso aperte o botão B0 ------------------------// 
+.................... if((input(pin_b0)) == 0){ 
+011A:  BSF    F93.0
+011C:  BTFSC  F81.0
+011E:  BRA    0130
+....................    minutosUnidade++; 
+0120:  INCF   07,F
+....................    delay_ms(300); 
+0122:  MOVLW  02
+0124:  MOVWF  14
+0126:  MOVLW  96
+0128:  MOVWF  15
+012A:  RCALL  0004
+012C:  DECFSZ 14,F
+012E:  BRA    0126
+.................... } 
+....................  
+.................... // if que adiciona + 1 hora caso aperte o botão B1 --------------------------// 
+.................... if((input(pin_b1)) == 0){ 
+0130:  BSF    F93.1
+0132:  BTFSC  F81.1
+0134:  BRA    0146
+....................    horasUnidade++; 
+0136:  INCF   05,F
+....................    delay_ms(300); 
+0138:  MOVLW  02
+013A:  MOVWF  14
+013C:  MOVLW  96
+013E:  MOVWF  15
+0140:  RCALL  0004
+0142:  DECFSZ 14,F
+0144:  BRA    013C
+.................... } 
+....................  
+.................... // Reseta o ciclo unidade quando chega a 10 e adiciona mais 1 ao ciclo dezena// 
+.................... if (minutosUnidade == 10){ 
+0146:  MOVF   07,W
+0148:  SUBLW  0A
+014A:  BNZ   0150
+....................    minutosUnidade = 0; 
+014C:  CLRF   07
+....................    minutosDezena++;  
+014E:  INCF   06,F
+.................... } 
+....................  
+.................... // Reseta o ciclo de 60 minutos e adiciona 1 a horas ------------------------// 
+.................... if (((minutosDezena*10) + minutosUnidade) == 60){ 
+0150:  MOVF   06,W
+0152:  MULLW  0A
+0154:  MOVF   FF3,W
+0156:  ADDWF  07,W
+0158:  SUBLW  3C
+015A:  BNZ   0162
+....................    minutosDezena = 0;    
+015C:  CLRF   06
+....................    minutosUnidade = 0; 
+015E:  CLRF   07
+....................    horasUnidade++; 
+0160:  INCF   05,F
+.................... } 
+....................  
+.................... // Reseta a unidade de horas quando ela chega a 10 e adiciona 1 a dezena de horas // 
+.................... if (horasUnidade == 10){ 
+0162:  MOVF   05,W
+0164:  SUBLW  0A
+0166:  BNZ   016C
+....................    horasUnidade = 0; 
+0168:  CLRF   05
+....................    horasDezena++;  
+016A:  INCF   04,F
+.................... } 
+....................  
+.................... // Zera o relógio quando chega em 24 horas. 
+.................... if ((horasDezena == 2)&&(horasUnidade == 4)){ 
+016C:  MOVF   04,W
+016E:  SUBLW  02
+0170:  BNZ   0180
+0172:  MOVF   05,W
+0174:  SUBLW  04
+0176:  BNZ   0180
+....................    horasDezena = 0; 
+0178:  CLRF   04
+....................    horasUnidade = 0; 
+017A:  CLRF   05
+....................    minutosDezena = 0; 
+017C:  CLRF   06
+....................    minutosUnidade = 0; 
+017E:  CLRF   07
+.................... } 
+.................... conteSegundos++; 
+0180:  INCF   08,F
+0182:  BTFSC  FD8.2
+0184:  INCF   09,F
+0186:  BRA    007C
+.................... } 
+.................... } 
+0188:  SLEEP 
+
+Configuration Fuses:
+   Word  1: CC27   PLL12 CPUDIV1 USBDIV HS FCMEN IESO
+   Word  2: 1E3E   PUT BROWNOUT BORV21 VREGEN NOWDT WDT32768
+   Word  3: 8700   CCP2C1 PBADEN LPT1OSC MCLR
+   Word  4: 00A1   STVREN NOLVP ICSP2 NOXINST NODEBUG
+   Word  5: C00F   NOPROTECT NOCPB NOCPD
+   Word  6: E00F   NOWRT NOWRTC NOWRTB NOWRTD
+   Word  7: 400F   NOEBTR NOEBTRB
